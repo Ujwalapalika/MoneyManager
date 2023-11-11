@@ -45,39 +45,51 @@ class MoneyManager extends Component {
     )
     this.setState({historyList: filterhistorList})
     const newList = historyList.filter(tran => tran.id === id)
-    if (newList.Type === 'INCOME') {
+    console.log(newList)
+    if (newList[0].Type === 'INCOME') {
       this.setState({
-        income: income - newList.income,
-        balance: balance - newList.balance,
-        expenses: expenses - 0,
+        income: Number(income) - Number(newList[0].Amount),
+        balance: Number(balance) - Number(newList[0].Amount),
       })
     } else {
-      this.setState({expenses: newList.expenses})
+      this.setState({
+        expenses: Number(expenses) - Number(newList[0].Amount),
+        balance: Number(balance) + Number(newList[0].Amount),
+      })
+      console.log(newList[0].Amount)
     }
   }
 
   addTransaction = event => {
     event.preventDefault()
-    const {historyList, Title, Amount, Type, income, expense} = this.state
+    const {
+      historyList,
+      Title,
+      Amount,
+      Type,
+      income,
+      expenses,
+      balance,
+    } = this.state
     const newTransaction = {
       Title,
       Amount,
       Type,
       id: uuidv4(),
     }
-    console.log(newTransaction.id)
     this.setState({historyList: [...historyList, newTransaction]})
     if (Type === 'INCOME') {
-      this.setState({income: Amount})
+      this.setState({
+        income: Number(income) + Number(Amount),
+        balance: Number(balance) + Number(Amount),
+      })
     } else {
-      this.setState({expense: Amount})
+      this.setState({expenses: Number(expenses) + Number(Amount)})
+      this.setState({balance: Number(income) - Number(expenses)})
     }
-    this.setState({balance: income - expense})
-    this.setState({
-      Title: '',
-      Amount: '',
-      Type: transactionTypeOptions[0].optionId,
-    })
+    this.setState({Title: ''})
+    this.setState({Amount: ''})
+    this.setState({Type: transactionTypeOptions[0].optionId})
   }
 
   render() {
@@ -105,7 +117,7 @@ class MoneyManager extends Component {
           />
           <label htmlFor="amount">AMOUNT</label>
           <input
-            type="number"
+            type="text"
             id="amount"
             onChange={this.addAmount}
             value={Amount}

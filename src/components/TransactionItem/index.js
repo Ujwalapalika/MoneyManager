@@ -7,8 +7,8 @@ const TransactionItem = props => {
   }
   return (
     <div>
-      <div>
-        <h1>History</h1>
+      <h1>History</h1>
+      <div className="transaction">
         <p>Title</p>
         <p>Amount</p>
         <p>Type</p>
